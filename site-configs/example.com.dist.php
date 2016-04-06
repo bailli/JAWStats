@@ -17,5 +17,6 @@ $aConfig["example.com"] = array(
     "language"     => "en-gb",
     "type"         => "web",
     "urlaliasfile" => "", // optional, read url alias file, display page titles instead of urls under 'Pages' tab
-    "parts"        => ""  // Optional (only if you want to combine/stack multiple awstats logs)
+    "parts"        => "",  // Optional (only if you want to combine/stack multiple awstats logs)
+    "excludepages" => array()  // optional, skip data lines starting with any of the supplied strings
 );

@@ -43,8 +43,9 @@ class clsAWStats
     var $iDailyVisitAvg  = 0;
     var $iDailyUniqueAvg = 0;
     var $sFileName       = "";
+    var $arrExclude      = array();
 
-    function clsAWStats($sStatName, $sFilePath = "", $sFileName = "", $iYear = 0, $iMonth = 0)
+    function clsAWStats($sStatName, $sFilePath = "", $sFileName = "", $iYear = 0, $iMonth = 0, $arrExclude = array())
     {
         // validate dates
         $dtDate       = ValidateDate($iYear, $iMonth);
@@ -69,6 +70,8 @@ class clsAWStats
 
         $this->sFileName = $sFileName;
 
+        $this->arrExclude = $arrExclude;        
+        
         if (is_readable($sFilePath)) {
             $this->sAWStats = htmlentities(file_get_contents($sFilePath), ENT_IGNORE);
             $this->bLoaded  = true;
@@ -277,36 +280,32 @@ class clsAWStats
             $max       = $_REQUEST["max"];
         $arrStat   = explode("\n", substr($this->sAWStats, ($iStartPos + 1), ($iEndPos - $iStartPos - 1)));
 
-        if ($max == 0)
-            for ($iIndex = 1; $iIndex < count($arrStat); $iIndex++) {
-                $data_line = explode(' ', $arrStat[$iIndex]);
-                if (isset($aDesc[$sSection])) {
-                    $req_len     = count($this->arrLabel[$sSection]) - 1;
-                    while (count($data_line) < $req_len)
-                        $data_line[] = "";
-                    $desc        = $data_line[0];
-                    if (isset($aDesc[$sSection][$data_line[0]]))
-                        $desc        = $aDesc[$sSection][$data_line[0]];
-                    $data_line[] = $desc;
-                }
-                $arrData[] = $data_line;
+        for ($iIndex = 1; $iIndex < count($arrStat); $iIndex++) {
+            $data_line = explode(' ', $arrStat[$iIndex]);
+            if (isset($aDesc[$sSection])) {
+                $req_len     = count($this->arrLabel[$sSection]) - 1;
+                while (count($data_line) < $req_len)
+                    $data_line[] = "";
+                $desc        = $data_line[0];
+                if (isset($aDesc[$sSection][$data_line[0]]))
+                    $desc        = $aDesc[$sSection][$data_line[0]];
+                $data_line[] = $desc;
             }
-        else
-            for ($iIndex = 1; $iIndex < count($arrStat); $iIndex++) {
-                $data_line = explode(' ', $arrStat[$iIndex]);
-                if (isset($aDesc[$sSection])) {
-                    $req_len     = count($this->arrLabel[$sSection]) - 1;
-                    while (count($data_line) < $req_len)
-                        $data_line[] = "";
-                    $desc        = $data_line[0];
-                    if (isset($aDesc[$sSection][$data_line[0]]))
-                        $desc        = $aDesc[$sSection][$data_line[0]];
-                    $data_line[] = $desc;
-                }
-                $arrData[] = $data_line;
-                if ($iIndex > $max)
+
+            $found = FALSE;
+            for ($iExclude = 0; $iExclude < count($this->arrExclude); $iExclude++)
+                if (strpos($data_line[0], $this->arrExclude[$iExclude]) === 0) {
+                    $found = TRUE;
                     break;
-            }
+                }
+
+            if (!$found)
+                $arrData[] = $data_line;
+
+	    if ($max && (count($arrData) > $max))
+	        break;
+        }
+
         return $arrData;
     }
 
