@@ -47,8 +47,8 @@ if (isset($_REQUEST["part"])) {
 }
 
 // create class
-$clsAWStats = new clsAWStats($g_sConfig, $g_aConfig["statspath"],
-    /* $g_aConfig["statsname"] */ null, $_REQUEST["year"], $_REQUEST["month"]);
+$clsAWStats = new clsAWStats($g_sConfig, $g_aConfig["statspath"], isset($g_aConfig["statsname"]) ? $g_aConfig["statsname"]
+            : null, $_REQUEST["year"], $_REQUEST["month"]);
 
 $urlAliasFile = null;
 if (isset($g_aConfig["urlaliasfile"])) {
