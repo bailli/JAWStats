@@ -141,6 +141,11 @@ foreach ($aParts as $part) {
 
 if (!$bHaveLog)
     Error("CannotOpenLog", $clsAWStats[$aParts[0]]->sFileName);
+
+if (($g_aConfig["type"] == 0) || !file_exists("/js/jawstats_".$g_aConfig["type"].".js"))
+    $js_type = "web";
+else
+    $js_type = $g_aConfig["type"];
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -166,7 +171,7 @@ if (!$bHaveLog)
 
         <script type="text/javascript" src="<?php echo $sStaticUrl ?>js/constants.js?<?php echo $gc_sJavascriptVersion ?>"></script>
         <script type="text/javascript" src="<?php echo $sStaticUrl ?>js/jawstats.js?<?php echo $gc_sJavascriptVersion ?>"></script>
-        <script type="text/javascript" src="<?php echo $sStaticUrl ?>js/jawstats_<?php echo $g_aConfig['type'] ?>.js?<?php echo $gc_sJavascriptVersion ?>"></script>
+        <script type="text/javascript" src="<?php echo $sStaticUrl ?>js/jawstats_<?php echo $js_type ?>.js?<?php echo $gc_sJavascriptVersion ?>"></script>
         <script type="text/javascript">
             var g_sConfig = "<?php echo $g_sConfig ?>";
             var g_sParts = "<?php
